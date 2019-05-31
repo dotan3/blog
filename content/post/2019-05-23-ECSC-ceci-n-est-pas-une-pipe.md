@@ -3,7 +3,7 @@ title = "ECSC - Ceci n'est pas une pipe"
 description = ""
 author = "dotan3"
 date = 2019-05-31T09:51:48+02:00
-tags = ["web", "php", "rce", "open_basedir", "allow_url_fopen", "LD_PRELOAD", "putenv"]
+tags = ["web", "php", "rce", "open_basedir", "allow_url_fopen", "LD_PRELOAD", "putenv", "mail"]
 draft = false
 +++
 
@@ -26,7 +26,7 @@ From this very first page, some information already:
 * It's probably a PHP challenge because of the url: `login.php`
 * The HTML source does not reveal anything interesting
 * According to the HTTP response headers, the web server is `Apache 2.4.25 (Debian)`
-  - From tihs [we can infer](https://packages.debian.org/search?keywords=apache2) that Debian version is Stretch and Apache is at the latest stable version
+  - From this [we can infer](https://packages.debian.org/search?keywords=apache2) that Debian version is Stretch and Apache is at the latest stable version
 * I tried simplistic <abbr title="SQL injection">SQLi</abbr>, nothing
 
 ![ECSC 2019 - Ceci n'est pas une pipe - HTTP response headers](/img/ecsc-2019-ceci-nest-pas-une-pipe-http-response-headers.png)
@@ -171,7 +171,7 @@ I could not get the contents of `file.jpg` nor of `../../index.php`.<br>
 
 ### RCE attempt
 
-First thing I tried next was execute some system calls using PHP methods such as `exit()`, `system()` or `shell_exec()`:
+First thing I tried next was execute some system calls using PHP methods such as `exec()`, `system()` or `shell_exec()`:
 
 ```php
 <?php
@@ -221,8 +221,8 @@ I had a look at a few interesting areas in the result of `phpinfo()`:
 Some really useful information there:
 
 * We know the application working directory is the classic `/var/www/html`
-* We could not use `file_get_contents` because read the values for `allow_url_fopen` are `OFF`
-* We could not use any system calls because the functions are in the `disable_functions`
+* We could not use `file_get_contents` because the values for `allow_url_fopen` are `OFF`
+* We could not use any system calls because the functions are in `disable_functions`
 * There's some `prepend.php` file loaded from `/usr/share/php/chall/prepend.php`
   - Interesting, I did not even know about that [prepend feature](https://www.php.net/manual/fr/ini.core.php#ini.auto-prepend-file) in PHP!
 
@@ -473,7 +473,7 @@ Let's do this!
 /home/flag > /var/www/html/upload/4df6956c92a14c5014f891c9017d050bc6d7772b6eab4172726938a124c38e01/flag2
 ```
 
-**Then launch CHankro to generate the output file**
+**Then launch Chankro to generate the output file**
 
 ```bash
 $ python chankro.py --arch 64 --input shell.sh --output sample.php --path /var/www/html/upload/4df6956c92a14c5014f891c9017d050bc6d7772b6eab4172726938a124c38e01
@@ -514,3 +514,9 @@ mail('a','a','a','a');
 Now I just need some time to fully understand what Chankro does, but thanks for this one anyway, I learned many things!
 
 Kudos to the organizers of this CTF that I found quite fun, not too hard so I could progress and learn many new things.
+
+---
+
+### Edits
+
+* 2019-05-31 10:28:00 CEST - Fix some typos
