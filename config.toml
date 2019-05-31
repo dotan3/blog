@@ -1,4 +1,4 @@
-baseurl = "https://dotan3.github.io"
+baseurl = "https://dotan3.github.io/"
 title = "dotan3's CTF adventures"
 theme = "ghostwriter"
 languageCode = "en-us"
